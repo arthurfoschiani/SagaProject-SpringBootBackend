@@ -1,6 +1,12 @@
 package br.com.br.saga.model;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import br.com.br.saga.validation.IdadeMinima;
 import jakarta.persistence.*;
@@ -16,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +36,47 @@ public class Usuario {
     private String nome;
 
     @NotBlank(message = "O campo senha não pode estar em branco.")
-    @Size(min = 6, message = "A senha deve conter pelo menos 6 caracteres.")
+    @Size(min = 8, message = "A senha deve conter pelo menos 6 caracteres.")
     private String senha;
 
     @Past(message = "A data de nascimento deve estar no passado.")
     @IdadeMinima(message = "O usuário deve ter no mínimo 12 anos de idade.")
     LocalDate dataNascimento;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(
+            new SimpleGrantedAuthority("ROLE_USER")
+        );
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
