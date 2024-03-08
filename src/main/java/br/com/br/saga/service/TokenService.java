@@ -25,7 +25,7 @@ public class TokenService {
         String token = JWT.create()
             .withIssuer("sagaProject")
             .withSubject(email)
-            .withExpiresAt(Instant.now().plus(20, ChronoUnit.MINUTES))
+            .withExpiresAt(Instant.now().plus(7, ChronoUnit.DAYS))
             .sign(algorithm);
 
         return new Token(token, "JWT", "Bearer");
